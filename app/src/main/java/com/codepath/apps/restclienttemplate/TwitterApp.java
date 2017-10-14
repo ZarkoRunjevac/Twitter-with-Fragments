@@ -16,7 +16,7 @@ import android.content.Context;
  *     // use client to send requests to API
  *
  */
-public class RestApplication extends Application {
+public class TwitterApp extends Application {
 	private static Context context;
 
 	@Override
@@ -26,10 +26,10 @@ public class RestApplication extends Application {
 		FlowManager.init(new FlowConfig.Builder(this).build());
 		FlowLog.setMinimumLoggingLevel(FlowLog.Level.V);
 
-		RestApplication.context = this;
+		TwitterApp.context = this;
 	}
 
-	public static RestClient getRestClient() {
-		return (RestClient) RestClient.getInstance(RestClient.class, RestApplication.context);
+	public static TwitterClient getRestClient() {
+		return (TwitterClient) TwitterClient.getInstance(TwitterClient.class, TwitterApp.context);
 	}
 }
