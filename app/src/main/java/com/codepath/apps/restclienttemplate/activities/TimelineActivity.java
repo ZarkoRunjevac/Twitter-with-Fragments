@@ -16,6 +16,7 @@ import com.codepath.apps.restclienttemplate.TwitterApp;
 import com.codepath.apps.restclienttemplate.TwitterClient;
 import com.codepath.apps.restclienttemplate.models.Tweet;
 import com.codepath.apps.restclienttemplate.models.User;
+import com.codepath.apps.restclienttemplate.utils.EndlessRecyclerViewScrollListener;
 import com.loopj.android.http.JsonHttpResponseHandler;
 
 import org.json.JSONArray;
@@ -40,6 +41,8 @@ public class TimelineActivity extends AppCompatActivity {
 
     private User mCurrentUser;
 
+    EndlessRecyclerViewScrollListener scrollListener;
+
 
     @BindView(R.id.rvTweets)
     RecyclerView rvTweets;
@@ -59,11 +62,12 @@ public class TimelineActivity extends AppCompatActivity {
         tweets = new ArrayList<>();
 
         tweetAdapter = new TweetAdapter(tweets);
+        LinearLayoutManager linearLayoutManager=new LinearLayoutManager(this);
 
-        rvTweets.setLayoutManager(new LinearLayoutManager(this));
+        rvTweets.setLayoutManager(linearLayoutManager);
         rvTweets.setAdapter(tweetAdapter);
 
-        populateTimeLine();
+        populateTimeLine(null);
 
         getCurrentUser();
 
@@ -76,6 +80,15 @@ public class TimelineActivity extends AppCompatActivity {
                 startActivityForResult(intent,REQUEST_CODE_ADD_TWEET);
             }
         });
+
+        scrollListener=new EndlessRecyclerViewScrollListener(linearLayoutManager) {
+            @Override
+            public void onLoadMore(int page, int totalItemsCount, RecyclerView view) {
+                populateTimeLine(tweets.get(tweets.size()-1).uid);
+            }
+        };
+
+        rvTweets.addOnScrollListener(scrollListener);
     }
 
     private void getCurrentUser() {
@@ -93,29 +106,30 @@ public class TimelineActivity extends AppCompatActivity {
             @Override
             public void onFailure(int statusCode, Header[] headers, Throwable throwable,
                                   JSONObject errorResponse) {
-                Log.d(TAG, "onSuccess: " + errorResponse.toString());
+                Log.d(TAG, "onFailure: " + errorResponse.toString());
                 throwable.printStackTrace();
             }
 
             @Override
             public void onFailure(int statusCode, Header[] headers, Throwable throwable,
                                   JSONArray errorResponse) {
-                Log.d(TAG, "onSuccess: " + errorResponse.toString());
+                Log.d(TAG, "onFailure: " + errorResponse.toString());
                 throwable.printStackTrace();
             }
 
             @Override
             public void onFailure(int statusCode, Header[] headers, String responseString,
                                   Throwable throwable) {
-                Log.d(TAG, "onSuccess: " + responseString.toString());
+                Log.d(TAG, "onFailure: " + responseString.toString());
                 throwable.printStackTrace();
             }
         });
     }
 
 
-    private void populateTimeLine() {
+    private void populateTimeLine(Long max_id) {
         client.getHomeTimeline(new JsonHttpResponseHandler() {
+            ArrayList<Tweet> newTweets;
             @Override
             public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
                 Log.d(TAG, "onSuccess: " + response.toString());
@@ -124,39 +138,44 @@ public class TimelineActivity extends AppCompatActivity {
             @Override
             public void onSuccess(int statusCode, Header[] headers, JSONArray response) {
                 Log.d(TAG, "onSuccess: " + response.toString());
+                newTweets=new ArrayList<Tweet>();
                 for (int i = 0; i < response.length(); i++) {
                     try {
+
                         Tweet tweet = Tweet.fromJson(response.getJSONObject(i));
-                        tweets.add(tweet);
-                        tweetAdapter.notifyItemInserted(tweets.size() - 1);
+                        newTweets.add(tweet);
+
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
 
                 }
+                tweets.addAll(newTweets);
+                tweetAdapter.notifyDataSetChanged();
+
             }
 
             @Override
             public void onFailure(int statusCode, Header[] headers, Throwable throwable,
                                   JSONObject errorResponse) {
-                Log.d(TAG, "onSuccess: " + errorResponse.toString());
+                Log.d(TAG, "onFailure: " + errorResponse.toString());
                 throwable.printStackTrace();
             }
 
             @Override
             public void onFailure(int statusCode, Header[] headers, Throwable throwable,
                                   JSONArray errorResponse) {
-                Log.d(TAG, "onSuccess: " + errorResponse.toString());
+                Log.d(TAG, "onFailure: " + errorResponse.toString());
                 throwable.printStackTrace();
             }
 
             @Override
             public void onFailure(int statusCode, Header[] headers, String responseString,
                                   Throwable throwable) {
-                Log.d(TAG, "onSuccess: " + responseString.toString());
+                Log.d(TAG, "onFailure: " + responseString.toString());
                 throwable.printStackTrace();
             }
-        });
+        },max_id);
     }
 
     @Override
