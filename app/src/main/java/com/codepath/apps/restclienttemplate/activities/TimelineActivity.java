@@ -4,6 +4,8 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v4.widget.SwipeRefreshLayout.OnRefreshListener;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -44,11 +46,9 @@ public class TimelineActivity extends AppCompatActivity {
     EndlessRecyclerViewScrollListener scrollListener;
 
 
-    @BindView(R.id.rvTweets)
-    RecyclerView rvTweets;
-    @BindView(R.id.fab)
-    FloatingActionButton fab;
-
+    @BindView(R.id.rvTweets) RecyclerView rvTweets;
+    @BindView(R.id.fab) FloatingActionButton fab;
+    @BindView(R.id.swipeContainer)SwipeRefreshLayout swipeContainer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,7 +67,7 @@ public class TimelineActivity extends AppCompatActivity {
         rvTweets.setLayoutManager(linearLayoutManager);
         rvTweets.setAdapter(tweetAdapter);
 
-        populateTimeLine(null);
+        populateTimeLine(null,false);
 
         getCurrentUser();
 
@@ -84,11 +84,18 @@ public class TimelineActivity extends AppCompatActivity {
         scrollListener=new EndlessRecyclerViewScrollListener(linearLayoutManager) {
             @Override
             public void onLoadMore(int page, int totalItemsCount, RecyclerView view) {
-                populateTimeLine(tweets.get(tweets.size()-1).uid);
+                populateTimeLine(tweets.get(tweets.size()-1).uid,false);
             }
         };
 
         rvTweets.addOnScrollListener(scrollListener);
+
+        swipeContainer.setOnRefreshListener(new OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                populateTimeLine(null,true);
+            }
+        });
     }
 
     private void getCurrentUser() {
@@ -127,7 +134,7 @@ public class TimelineActivity extends AppCompatActivity {
     }
 
 
-    private void populateTimeLine(Long max_id) {
+    private void populateTimeLine(Long max_id, final boolean isRefresh) {
         client.getHomeTimeline(new JsonHttpResponseHandler() {
             ArrayList<Tweet> newTweets;
             @Override
@@ -149,6 +156,10 @@ public class TimelineActivity extends AppCompatActivity {
                         e.printStackTrace();
                     }
 
+                }
+                if(isRefresh){
+                    tweetAdapter.clear();
+                    swipeContainer.setRefreshing(false);
                 }
                 tweets.addAll(newTweets);
                 tweetAdapter.notifyDataSetChanged();
