@@ -28,6 +28,7 @@
         android:layout_below="@+id/tvUserName"
         android:layout_marginLeft="5dp"
         android:layout_gravity="fill"
+        android:autoLink="all"
         android:layout_toEndOf="@+id/ivProfileImage"
         android:text="TextView"/>
 
