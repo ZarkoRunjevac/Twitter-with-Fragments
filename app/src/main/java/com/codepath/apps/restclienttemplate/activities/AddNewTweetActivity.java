@@ -11,6 +11,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 
+import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.codepath.apps.restclienttemplate.R;
 import com.codepath.apps.restclienttemplate.TwitterApp;
@@ -42,6 +43,9 @@ public class AddNewTweetActivity extends AppCompatActivity {
     @BindView(R.id.ivProfilePicture)ImageView ivProfilePicture;
     @BindView(R.id.etTweet)EditText etTweet;
     @BindView(R.id.btTweet)Button btTweet;
+    @BindView(R.id.tvCharCounter)TextView tvCharCounter;
+
+    private int mCharCount=140;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -119,6 +123,7 @@ public class AddNewTweetActivity extends AppCompatActivity {
 
     private void initTextWatcher(){
         TextWatcher textWatcher=new TextWatcher() {
+            int charCount=0;
             @Override
             public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
 
@@ -127,11 +132,14 @@ public class AddNewTweetActivity extends AppCompatActivity {
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
                 if(0==charSequence.length()) btTweet.setEnabled(false);
+                 charCount=charSequence.length();
+
             }
 
             @Override
             public void afterTextChanged(Editable editable) {
                 if(!TextUtils.isEmpty(etTweet.getText())) btTweet.setEnabled(true);
+                tvCharCounter.setText(Integer.toString(mCharCount-charCount));
             }
         };
 

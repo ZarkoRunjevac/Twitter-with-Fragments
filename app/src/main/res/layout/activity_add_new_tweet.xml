@@ -40,6 +40,18 @@
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/include"
+        android:maxLength="140"
         app:layout_constraintVertical_bias="0.0"/>
+    <TextView
+      android:id="@+id/tvCharCounter"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_marginTop="8dp"
+      android:layout_marginBottom="8dp"
+      android:layout_marginRight="8dp"
+      app:layout_constraintBottom_toBottomOf="parent"
+      app:layout_constraintRight_toLeftOf="@+id/btTweet"
+      app:layout_constraintTop_toBottomOf="@+id/etTweet"
+      android:text="140" />
 
 </android.support.constraint.ConstraintLayout>

@@ -34,7 +34,9 @@
             </intent-filter>
         </activity>
         <activity android:name=".activities.TimelineActivity"/>
-        <activity android:name=".activities.AddNewTweetActivity">
+        <activity
+          android:name=".activities.AddNewTweetActivity"
+          android:windowSoftInputMode="adjustResize">
         </activity>
     </application>
 
