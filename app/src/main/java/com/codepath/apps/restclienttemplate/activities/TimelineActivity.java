@@ -9,9 +9,12 @@ import android.support.v4.widget.SwipeRefreshLayout.OnRefreshListener;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
+import android.widget.ImageView;
 
+import com.bumptech.glide.Glide;
 import com.codepath.apps.restclienttemplate.R;
 import com.codepath.apps.restclienttemplate.TweetAdapter;
 import com.codepath.apps.restclienttemplate.TwitterApp;
@@ -49,6 +52,8 @@ public class TimelineActivity extends AppCompatActivity {
     @BindView(R.id.rvTweets) RecyclerView rvTweets;
     @BindView(R.id.fab) FloatingActionButton fab;
     @BindView(R.id.swipeContainer)SwipeRefreshLayout swipeContainer;
+    @BindView(R.id.toolbar)Toolbar toolbar;
+    @BindView(R.id.ivProfilePic)ImageView ivProfilePic;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,6 +61,8 @@ public class TimelineActivity extends AppCompatActivity {
         setContentView(R.layout.activity_timeline);
 
         ButterKnife.bind(this);
+
+        setSupportActionBar(toolbar);
 
         client = TwitterApp.getRestClient();
 
@@ -105,6 +112,9 @@ public class TimelineActivity extends AppCompatActivity {
                 Log.d(TAG, "onSuccess: " + response.toString());
                 try {
                     mCurrentUser = User.fromJSON(response);
+                    Glide.with(getApplicationContext())
+                            .load(mCurrentUser.profileImageUrl)
+                            .into(ivProfilePic);
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
