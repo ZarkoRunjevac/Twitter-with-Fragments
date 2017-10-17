@@ -1,9 +1,12 @@
 package com.codepath.apps.restclienttemplate.activities;
 
+import static android.R.attr.data;
+
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v4.widget.SwipeRefreshLayout.OnRefreshListener;
 import android.support.v7.app.AppCompatActivity;
@@ -22,8 +25,11 @@ import com.codepath.apps.restclienttemplate.TwitterClient;
 import com.codepath.apps.restclienttemplate.models.Tweet;
 import com.codepath.apps.restclienttemplate.models.User;
 import com.codepath.apps.restclienttemplate.utils.EndlessRecyclerViewScrollListener;
+import com.codepath.apps.restclienttemplate.utils.NetworkUtils;
 import com.loopj.android.http.JsonHttpResponseHandler;
 
+import com.raizlabs.android.dbflow.sql.language.SQLite;
+import java.util.List;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -41,12 +47,13 @@ public class TimelineActivity extends AppCompatActivity {
     private static final int REQUEST_CODE_ADD_TWEET=0;
 
     private TwitterClient client;
-    TweetAdapter tweetAdapter;
-    ArrayList<Tweet> tweets;
+    private TweetAdapter tweetAdapter;
+    private ArrayList<Tweet> tweets;
 
     private User mCurrentUser;
 
-    EndlessRecyclerViewScrollListener scrollListener;
+    private EndlessRecyclerViewScrollListener scrollListener;
+    private Snackbar snackbar;
 
 
     @BindView(R.id.rvTweets) RecyclerView rvTweets;
@@ -106,97 +113,118 @@ public class TimelineActivity extends AppCompatActivity {
     }
 
     private void getCurrentUser() {
-        client.getCurrentUser(new JsonHttpResponseHandler() {
-            @Override
-            public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
-                Log.d(TAG, "onSuccess: " + response.toString());
-                try {
-                    mCurrentUser = User.fromJSON(response);
-                    Glide.with(getApplicationContext())
+        if(NetworkUtils.isOnline(this,rvTweets, snackbar)) {
+            client.getCurrentUser(new JsonHttpResponseHandler() {
+                @Override
+                public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+                    Log.d(TAG, "onSuccess: " + response.toString());
+                    try {
+                        mCurrentUser = User.fromJSON(response);
+                        Glide.with(getApplicationContext())
                             .load(mCurrentUser.profileImageUrl)
                             .into(ivProfilePic);
-                } catch (JSONException e) {
-                    e.printStackTrace();
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
                 }
-            }
 
-            @Override
-            public void onFailure(int statusCode, Header[] headers, Throwable throwable,
-                                  JSONObject errorResponse) {
-                Log.d(TAG, "onFailure: " + errorResponse.toString());
-                throwable.printStackTrace();
-            }
+                @Override
+                public void onFailure(int statusCode, Header[] headers, Throwable throwable,
+                    JSONObject errorResponse) {
+                    Log.d(TAG, "onFailure: " + errorResponse.toString());
+                    throwable.printStackTrace();
+                }
 
-            @Override
-            public void onFailure(int statusCode, Header[] headers, Throwable throwable,
-                                  JSONArray errorResponse) {
-                Log.d(TAG, "onFailure: " + errorResponse.toString());
-                throwable.printStackTrace();
-            }
+                @Override
+                public void onFailure(int statusCode, Header[] headers, Throwable throwable,
+                    JSONArray errorResponse) {
+                    Log.d(TAG, "onFailure: " + errorResponse.toString());
+                    throwable.printStackTrace();
+                }
 
-            @Override
-            public void onFailure(int statusCode, Header[] headers, String responseString,
-                                  Throwable throwable) {
-                Log.d(TAG, "onFailure: " + responseString.toString());
-                throwable.printStackTrace();
-            }
-        });
+                @Override
+                public void onFailure(int statusCode, Header[] headers, String responseString,
+                    Throwable throwable) {
+                    Log.d(TAG, "onFailure: " + responseString.toString());
+                    throwable.printStackTrace();
+                }
+            });
+        }
     }
 
 
     private void populateTimeLine(Long max_id, final boolean isRefresh) {
-        client.getHomeTimeline(new JsonHttpResponseHandler() {
-            ArrayList<Tweet> newTweets;
-            @Override
-            public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
-                Log.d(TAG, "onSuccess: " + response.toString());
-            }
+        if(NetworkUtils.isOnline(this,rvTweets, snackbar)) {
+            client.getHomeTimeline(new JsonHttpResponseHandler() {
+                ArrayList<Tweet> newTweets;
 
-            @Override
-            public void onSuccess(int statusCode, Header[] headers, JSONArray response) {
-                Log.d(TAG, "onSuccess: " + response.toString());
-                newTweets=new ArrayList<Tweet>();
-                for (int i = 0; i < response.length(); i++) {
-                    try {
+                @Override
+                public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+                    Log.d(TAG, "onSuccess: " + response.toString());
+                }
 
-                        Tweet tweet = Tweet.fromJson(response.getJSONObject(i));
-                        newTweets.add(tweet);
+                @Override
+                public void onSuccess(int statusCode, Header[] headers, JSONArray response) {
+                    Log.d(TAG, "onSuccess: " + response.toString());
+                    newTweets = new ArrayList<Tweet>();
+                    for (int i = 0; i < response.length(); i++) {
+                        try {
 
-                    } catch (JSONException e) {
-                        e.printStackTrace();
+                            Tweet tweet = Tweet.fromJson(response.getJSONObject(i));
+                            tweet.user.save();
+                            tweet.save();
+                            newTweets.add(tweet);
+
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+
                     }
+                    if (isRefresh) {
+                        tweetAdapter.clear();
+                        swipeContainer.setRefreshing(false);
+                    }
+                    tweets.addAll(newTweets);
+                    tweetAdapter.notifyDataSetChanged();
 
                 }
-                if(isRefresh){
-                    tweetAdapter.clear();
-                    swipeContainer.setRefreshing(false);
+
+                @Override
+                public void onFailure(int statusCode, Header[] headers, Throwable throwable,
+                    JSONObject errorResponse) {
+                    Log.d(TAG, "onFailure: " + errorResponse.toString());
+                    throwable.printStackTrace();
                 }
-                tweets.addAll(newTweets);
-                tweetAdapter.notifyDataSetChanged();
 
-            }
+                @Override
+                public void onFailure(int statusCode, Header[] headers, Throwable throwable,
+                    JSONArray errorResponse) {
+                    Log.d(TAG, "onFailure: " + errorResponse.toString());
+                    throwable.printStackTrace();
+                }
 
-            @Override
-            public void onFailure(int statusCode, Header[] headers, Throwable throwable,
-                                  JSONObject errorResponse) {
-                Log.d(TAG, "onFailure: " + errorResponse.toString());
-                throwable.printStackTrace();
+                @Override
+                public void onFailure(int statusCode, Header[] headers, String responseString,
+                    Throwable throwable) {
+                    Log.d(TAG, "onFailure: " + responseString.toString());
+                    throwable.printStackTrace();
+                }
+            }, max_id);
+        }else{
+            if(isRefresh){
+                swipeContainer.setRefreshing(false);
+                return;
+            }else{
+                if(tweets.isEmpty()) {
+                    List<Tweet> newTweets = SQLite
+                        .select()
+                        .from(Tweet.class)
+                        .queryList();
+                    tweets.addAll(newTweets);
+                    tweetAdapter.notifyDataSetChanged();
+                }
             }
-
-            @Override
-            public void onFailure(int statusCode, Header[] headers, Throwable throwable,
-                                  JSONArray errorResponse) {
-                Log.d(TAG, "onFailure: " + errorResponse.toString());
-                throwable.printStackTrace();
-            }
-
-            @Override
-            public void onFailure(int statusCode, Header[] headers, String responseString,
-                                  Throwable throwable) {
-                Log.d(TAG, "onFailure: " + responseString.toString());
-                throwable.printStackTrace();
-            }
-        },max_id);
+        }
     }
 
     @Override

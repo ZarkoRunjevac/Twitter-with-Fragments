@@ -8,5 +8,7 @@
     <string name="title_activity_test">test</string>
     <string name="new_tweet_hint">What\'s happening?</string>
     <string name="tweet_button">Tweet</string>
+    <string name="no_network">No network connectivity.</string>
+    <string name="offline">No internet connectivity</string>
 
 </resources>
