@@ -45,6 +45,7 @@ public class AddNewTweetActivity extends AppCompatActivity {
     @BindView(R.id.btTweet)Button btTweet;
     @BindView(R.id.tvCharCounter)TextView tvCharCounter;
 
+
     private int mCharCount=140;
 
     @Override

@@ -37,8 +37,11 @@
         <activity android:name=".activities.TimelineActivity" />
         <activity
           android:name=".activities.AddNewTweetActivity"
-          android:windowSoftInputMode="adjustResize"></activity>
-        <activity android:name=".activities.TweetActivity" android:theme="@style/AppTheme.Default"></activity>
+          android:windowSoftInputMode="adjustResize" />
+        <activity
+          android:name=".activities.TweetActivity"
+          android:theme="@style/AppTheme.Default" />
+        <activity android:name=".activities.ReplyToTweetActivity" android:windowSoftInputMode="adjustResize"></activity>
     </application>
 
 </manifest>
