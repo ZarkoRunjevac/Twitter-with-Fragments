@@ -1,7 +1,5 @@
 package com.codepath.apps.restclienttemplate.activities;
 
-import static android.R.attr.data;
-
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
@@ -27,15 +25,15 @@ import com.codepath.apps.restclienttemplate.models.User;
 import com.codepath.apps.restclienttemplate.utils.EndlessRecyclerViewScrollListener;
 import com.codepath.apps.restclienttemplate.utils.NetworkUtils;
 import com.loopj.android.http.JsonHttpResponseHandler;
-
 import com.raizlabs.android.dbflow.sql.language.SQLite;
-import java.util.List;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.parceler.Parcels;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -240,5 +238,11 @@ public class TimelineActivity extends AppCompatActivity {
             tweets.add(0,tweet);
             tweetAdapter.notifyDataSetChanged();
         }
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        finish();
     }
 }
