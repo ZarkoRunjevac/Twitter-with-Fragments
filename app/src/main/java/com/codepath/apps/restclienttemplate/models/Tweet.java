@@ -63,31 +63,33 @@ public class Tweet extends BaseModel {
             }
 
         }
+        if(jsonObject.has("extended_entities")){
+            JSONObject extended_entities=jsonObject.getJSONObject("extended_entities");
+            if(extended_entities!=null && extended_entities.has("media")){
 
-        JSONObject extended_entities=jsonObject.getJSONObject("extended_entities");
-        if(extended_entities!=null && extended_entities.has("media")){
+                JSONArray media=extended_entities.getJSONArray("media");
+                if(media!=null){
+                    for(int i=0;i<media.length();++i){
+                        JSONObject object=media.getJSONObject(i);
+                        String type=object.getString("type");
 
-            JSONArray media=extended_entities.getJSONArray("media");
-            if(media!=null){
-                for(int i=0;i<media.length();++i){
-                    JSONObject object=media.getJSONObject(i);
-                    String type=object.getString("type");
-
-                    if(type.equals("video")){
-                        tweet.embeddedVideo=object.getString("media_url");
-                        JSONObject video_info=object.getJSONObject("video_info");
-                        if(video_info!=null && video_info.has("variants")){
-                            JSONArray variants=video_info.getJSONArray("variants");
-                            if(variants!=null&&variants.length()>0){
-                                JSONObject video=variants.getJSONObject(0);
-                                tweet.embeddedVideo=video.getString("url");
+                        if(type.equals("video")){
+                            tweet.embeddedVideo=object.getString("media_url");
+                            JSONObject video_info=object.getJSONObject("video_info");
+                            if(video_info!=null && video_info.has("variants")){
+                                JSONArray variants=video_info.getJSONArray("variants");
+                                if(variants!=null&&variants.length()>0){
+                                    JSONObject video=variants.getJSONObject(0);
+                                    tweet.embeddedVideo=video.getString("url");
+                                }
                             }
                         }
                     }
                 }
-            }
 
+            }
         }
+
 
 
         return tweet;

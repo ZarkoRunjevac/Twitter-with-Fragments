@@ -20,6 +20,7 @@ import com.codepath.apps.restclienttemplate.R;
 import com.codepath.apps.restclienttemplate.TweetAdapter;
 import com.codepath.apps.restclienttemplate.TwitterApp;
 import com.codepath.apps.restclienttemplate.TwitterClient;
+import com.codepath.apps.restclienttemplate.fragments.NewTweetFragment;
 import com.codepath.apps.restclienttemplate.models.Tweet;
 import com.codepath.apps.restclienttemplate.models.User;
 import com.codepath.apps.restclienttemplate.utils.EndlessRecyclerViewScrollListener;
@@ -86,10 +87,13 @@ public class TimelineActivity extends AppCompatActivity {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(getApplicationContext(), AddNewTweetActivity.class);
+//                Intent intent = new Intent(getApplicationContext(), AddNewTweetActivity.class);
+//
+//                intent.putExtra("user", Parcels.wrap(mCurrentUser));
+//                startActivityForResult(intent,REQUEST_CODE_ADD_TWEET);
 
-                intent.putExtra("user", Parcels.wrap(mCurrentUser));
-                startActivityForResult(intent,REQUEST_CODE_ADD_TWEET);
+                NewTweetFragment newTweetFragment=NewTweetFragment.newInstance();
+                newTweetFragment.show(getFragmentManager(),"newTweetTag");
             }
         });
 
@@ -245,4 +249,14 @@ public class TimelineActivity extends AppCompatActivity {
         super.onBackPressed();
         finish();
     }
+
+    public void onNewTweetAdded(Tweet tweet){
+        tweets.add(0,tweet);
+        tweetAdapter.notifyDataSetChanged();
+    }
+
+    public User getUser(){
+        return mCurrentUser;
+    }
+
 }
