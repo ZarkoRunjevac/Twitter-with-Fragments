@@ -54,7 +54,7 @@ public class TweetActivity extends AppCompatActivity {
         setContentView(R.layout.activity_tweet);
         ButterKnife.bind(this);
 
-        final Tweet tweet = (Tweet) Parcels.unwrap(getIntent().getParcelableExtra(TweetAdapter.TWEET));
+        final Tweet tweet = (Tweet) Parcels.unwrap(getIntent().getParcelableExtra(TimelineActivity.TWEET));
 
         Glide.with(getApplicationContext())
                 .load(tweet.user.profileImageUrl)

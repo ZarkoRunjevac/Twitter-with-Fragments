@@ -1,6 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android">
+    <data>
+
+        <variable
+          name="isLoading"
+          type="boolean" />
+    </data>
 <android.support.constraint.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -14,6 +21,7 @@
         android:layout_marginTop="0dp"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintTop_toTopOf="parent"
+      app:visibleGone="@{!isLoading}"
         tools:src="@drawable/ic_launcher"/>
 
     <TextView
@@ -25,6 +33,8 @@
         android:layout_marginTop="25dp"
         android:text="Home"
         app:layout_constraintBottom_toBottomOf="@+id/ivProfilePic"
+      app:visibleGone="@{!isLoading}"
         app:layout_constraintLeft_toRightOf="@+id/ivProfilePic"
         app:layout_constraintTop_toTopOf="parent"/>
 </android.support.constraint.ConstraintLayout>
+    </layout>
