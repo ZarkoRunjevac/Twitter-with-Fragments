@@ -13,5 +13,6 @@
   <string name="reply_to">Replying to</string>
   <string name="reply_tweet_hint">Tweet your reply</string>
   <string name="reply_button">Reply</string>
+    <string name="tweet">Tweet</string>
 
 </resources>

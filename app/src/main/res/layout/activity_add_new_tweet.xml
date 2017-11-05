@@ -5,12 +5,15 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+
+    android:background="@android:color/background_light"
     tools:context="com.codepath.apps.restclienttemplate.activities.AddNewTweetActivity">
 
-    <include layout="@layout/content_new_tweet_toolbar"
-             tools:layout_editor_absoluteY="0dp"
-             tools:layout_editor_absoluteX="0dp"
-             android:id="@+id/include"/>
+    <include
+        android:id="@+id/include"
+        layout="@layout/content_new_tweet_toolbar"
+        tools:layout_editor_absoluteX="0dp"
+        tools:layout_editor_absoluteY="0dp"/>
 
     <Button
         android:id="@+id/btTweet"
@@ -18,8 +21,10 @@
         android:layout_height="wrap_content"
         android:layout_marginBottom="8dp"
         android:layout_marginRight="8dp"
-        android:text="@string/tweet_button"
+        android:background="@color/app_accent"
+        android:textColor="#fff"
         android:enabled="false"
+        android:text="@string/tweet_button"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintRight_toRightOf="parent"/>
 
@@ -35,23 +40,24 @@
         android:gravity="top"
         android:hint="@string/new_tweet_hint"
         android:inputType="textMultiLine"
+        android:maxLength="140"
         app:layout_constraintBottom_toTopOf="@+id/btTweet"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/include"
-        android:maxLength="140"
         app:layout_constraintVertical_bias="0.0"/>
+
     <TextView
-      android:id="@+id/tvCharCounter"
-      android:layout_width="wrap_content"
-      android:layout_height="wrap_content"
-      android:layout_marginTop="8dp"
-      android:layout_marginBottom="8dp"
-      android:layout_marginRight="8dp"
-      app:layout_constraintBottom_toBottomOf="parent"
-      app:layout_constraintRight_toLeftOf="@+id/btTweet"
-      app:layout_constraintTop_toBottomOf="@+id/etTweet"
-      android:text="140" />
+        android:id="@+id/tvCharCounter"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:layout_marginRight="8dp"
+        android:layout_marginTop="8dp"
+        android:text="140"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintRight_toLeftOf="@+id/btTweet"
+        app:layout_constraintTop_toBottomOf="@+id/etTweet"/>
 
 </android.support.constraint.ConstraintLayout>

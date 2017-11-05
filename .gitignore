@@ -29,7 +29,7 @@ proguard/
 *.ipr
 *.iws
 .idea/
-
+*.log
 *.pydevproject
 .project
 .metadata

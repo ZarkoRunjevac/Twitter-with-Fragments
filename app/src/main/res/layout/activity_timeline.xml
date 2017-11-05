@@ -14,36 +14,45 @@
     android:layout_height="match_parent"
     tools:context="com.codepath.apps.restclienttemplate.activities.TimelineActivity">
 
-    <android.support.design.widget.AppBarLayout
-      android:id="@+id/appBar"
-      android:layout_width="match_parent"
-      android:layout_height="wrap_content"
-      android:layout_marginTop="0dp"
-      android:layout_marginLeft="0dp"
-      android:layout_marginRight="0dp"
-      android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
-      app:layout_constraintHorizontal_bias="0.0"
-      app:layout_constraintLeft_toLeftOf="parent"
-      app:layout_constraintRight_toRightOf="parent"
-      app:layout_constraintTop_toTopOf="parent">
+      <android.support.design.widget.AppBarLayout
+          android:id="@+id/appBar"
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:layout_marginLeft="0dp"
+          android:layout_marginRight="0dp"
+          android:layout_marginTop="0dp"
+          android:background="@android:color/background_light"
+          android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
+          app:layout_constraintHorizontal_bias="0.0"
+          app:layout_constraintLeft_toLeftOf="parent"
+          app:layout_constraintRight_toRightOf="parent"
+          app:layout_constraintTop_toTopOf="parent">
 
-      <!-- Toolbar is the actual app bar with text and the action items -->
-      <android.support.v7.widget.Toolbar
-        android:id="@+id/toolbar"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="?attr/colorPrimary"
-        android:weightSum="1"
-        app:layout_scrollFlags="scroll|enterAlways"
-        tools:layout_editor_absoluteX="8dp"
-        app:visibleGone="@{!isLoading}"
-        tools:layout_editor_absoluteY="132dp">
+          <!-- Toolbar is the actual app bar with text and the action items -->
+          <android.support.v7.widget.Toolbar
+              android:id="@+id/toolbar"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:layout_marginLeft="0dp"
+              android:layout_marginRight="0dp"
+              android:layout_marginTop="0dp"
+              android:layout_marginBottom="0dp"
+              android:minHeight="?attr/actionBarSize"
+              android:weightSum="1"
+              app:layout_scrollFlags="scroll|enterAlways"
+              app:visibleGone="@{!isLoading}"
+              tools:layout_editor_absoluteX="8dp"
+              tools:layout_editor_absoluteY="132dp">
 
-        <include layout="@layout/timeline_toolbar"
-          android:id="@+id/included_toolbar"/>
+              <include
+                  android:id="@+id/included_toolbar"
+                  layout="@layout/timeline_toolbar"
+                  android:layout_width="match_parent"
 
-      </android.support.v7.widget.Toolbar>
-    </android.support.design.widget.AppBarLayout>
+                  android:layout_height="match_parent"/>
+
+          </android.support.v7.widget.Toolbar>
+      </android.support.design.widget.AppBarLayout>
 
     <include
       layout="@layout/content_timeline"
@@ -53,15 +62,15 @@
       android:layout_height="match_parent"
       app:layout_behavior="@string/appbar_scrolling_view_behavior" />
 
-    <android.support.design.widget.FloatingActionButton
-      android:id="@+id/fab"
-      android:layout_width="wrap_content"
-      android:layout_height="wrap_content"
-      android:layout_margin="@dimen/fab_margin"
-      android:layout_gravity="bottom|end"
-      app:backgroundTint="@android:color/background_light"
-      app:visibleGone="@{!isLoading}"
-      app:srcCompat="@drawable/ic_new_tweet" />
+      <android.support.design.widget.FloatingActionButton
+          android:id="@+id/fab"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:layout_gravity="bottom|end"
+          android:layout_margin="@dimen/fab_margin"
+          app:backgroundTint="@android:color/background_light"
+          app:srcCompat="@drawable/ic_new_tweet"
+          app:visibleGone="@{!isLoading}"/>
 
 
   </android.support.design.widget.CoordinatorLayout>

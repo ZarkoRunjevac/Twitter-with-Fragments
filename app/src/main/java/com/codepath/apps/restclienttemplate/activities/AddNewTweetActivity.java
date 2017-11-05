@@ -10,9 +10,10 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
-
 import android.widget.TextView;
+
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
 import com.codepath.apps.restclienttemplate.R;
 import com.codepath.apps.restclienttemplate.TwitterApp;
 import com.codepath.apps.restclienttemplate.TwitterClient;
@@ -60,6 +61,7 @@ public class AddNewTweetActivity extends AppCompatActivity {
 
         Glide.with(this)
                 .load(currentUser.profileImageUrl)
+                .apply(RequestOptions.circleCropTransform())
                 .into(ivProfilePicture);
 
         btTweet.setOnClickListener(new View.OnClickListener() {

@@ -12,8 +12,8 @@ import android.widget.TextView;
 import android.widget.VideoView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
 import com.codepath.apps.restclienttemplate.R;
-import com.codepath.apps.restclienttemplate.TweetAdapter;
 import com.codepath.apps.restclienttemplate.models.Tweet;
 import com.codepath.apps.restclienttemplate.utils.Utils;
 
@@ -58,6 +58,7 @@ public class TweetActivity extends AppCompatActivity {
 
         Glide.with(getApplicationContext())
                 .load(tweet.user.profileImageUrl)
+                .apply(RequestOptions.circleCropTransform())
                 .into(ivProfileImage);
 
         tvName.setText("@" + tweet.user.screenName);

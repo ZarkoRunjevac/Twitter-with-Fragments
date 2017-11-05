@@ -13,11 +13,11 @@ import android.util.Log;
 import android.view.View;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
 import com.codepath.apps.restclienttemplate.R;
 import com.codepath.apps.restclienttemplate.TweetAdapter;
 import com.codepath.apps.restclienttemplate.TwitterApp;
 import com.codepath.apps.restclienttemplate.TwitterClient;
-
 import com.codepath.apps.restclienttemplate.callback.TweetClickCallback;
 import com.codepath.apps.restclienttemplate.databinding.ActivityTimelineBinding;
 import com.codepath.apps.restclienttemplate.fragments.NewTweetFragment;
@@ -41,8 +41,8 @@ import cz.msebera.android.httpclient.Header;
 public class TimelineActivity extends AppCompatActivity {
 
     private static final String TAG = TimelineActivity.class.getCanonicalName();
-    private static final int REQUEST_CODE_ADD_TWEET=0;
-    public static final String TWEET="com.codepath.apps.restclienttemplate.TweetAdapter.TWEET";
+    private static final int REQUEST_CODE_ADD_TWEET = 0;
+    public static final String TWEET = "com.codepath.apps.restclienttemplate.TweetAdapter.TWEET";
 
     private TwitterClient client;
     TweetAdapter tweetAdapter;
@@ -55,13 +55,13 @@ public class TimelineActivity extends AppCompatActivity {
 
     ActivityTimelineBinding mBinding;
 
-    private boolean tweetsLoaded=false;
-    private boolean userLoaded=false;
+    private boolean tweetsLoaded = false;
+    private boolean userLoaded = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-       mBinding= DataBindingUtil.setContentView(this,R.layout.activity_timeline);
+        mBinding = DataBindingUtil.setContentView(this, R.layout.activity_timeline);
 
         setLoading(true);
         setSupportActionBar(mBinding.toolbar);
@@ -70,13 +70,13 @@ public class TimelineActivity extends AppCompatActivity {
 
         tweets = new ArrayList<>();
 
-        tweetAdapter = new TweetAdapter(this,mTweetClickCallback);
-        LinearLayoutManager linearLayoutManager=new LinearLayoutManager(this);
+        tweetAdapter = new TweetAdapter(this, mTweetClickCallback);
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
 
         mBinding.included.rvTweets.setLayoutManager(linearLayoutManager);
         mBinding.included.rvTweets.setAdapter(tweetAdapter);
 
-        populateTimeLine(null,false);
+        populateTimeLine(null, false);
 
         getCurrentUser();
 
@@ -84,15 +84,15 @@ public class TimelineActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
 
-                NewTweetFragment newTweetFragment=NewTweetFragment.newInstance();
-                newTweetFragment.show(getFragmentManager(),"newTweetTag");
+                NewTweetFragment newTweetFragment = NewTweetFragment.newInstance();
+                newTweetFragment.show(getFragmentManager(), "newTweetTag");
             }
         });
 
-        scrollListener=new EndlessRecyclerViewScrollListener(linearLayoutManager) {
+        scrollListener = new EndlessRecyclerViewScrollListener(linearLayoutManager) {
             @Override
             public void onLoadMore(int page, int totalItemsCount, RecyclerView view) {
-                populateTimeLine(tweets.get(tweets.size()-1).uid,false);
+                populateTimeLine(tweets.get(tweets.size() - 1).uid, false);
             }
         };
 
@@ -101,7 +101,7 @@ public class TimelineActivity extends AppCompatActivity {
         mBinding.included.swipeContainer.setOnRefreshListener(new OnRefreshListener() {
             @Override
             public void onRefresh() {
-                populateTimeLine(null,true);
+                populateTimeLine(null, true);
             }
         });
 
@@ -109,7 +109,7 @@ public class TimelineActivity extends AppCompatActivity {
     }
 
     private void getCurrentUser() {
-        if(NetworkUtils.isOnline(this,mBinding.included.rvTweets, snackbar)) {
+        if (NetworkUtils.isOnline(this, mBinding.included.rvTweets, snackbar)) {
             client.getCurrentUser(new JsonHttpResponseHandler() {
                 @Override
                 public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
@@ -117,9 +117,10 @@ public class TimelineActivity extends AppCompatActivity {
                     try {
                         mCurrentUser = User.fromJSON(response);
                         Glide.with(getApplicationContext())
-                            .load(mCurrentUser.profileImageUrl)
-                            .into(mBinding.includedToolbar.ivProfilePic);
-                        userLoaded=true;
+                                .load(mCurrentUser.profileImageUrl)
+                                .apply(RequestOptions.circleCropTransform())
+                                .into(mBinding.includedToolbar.ivProfilePic);
+                        userLoaded = true;
                         mDataLoadedListner.onDataLoaded();
                     } catch (JSONException e) {
                         e.printStackTrace();
@@ -128,21 +129,21 @@ public class TimelineActivity extends AppCompatActivity {
 
                 @Override
                 public void onFailure(int statusCode, Header[] headers, Throwable throwable,
-                    JSONObject errorResponse) {
+                                      JSONObject errorResponse) {
                     Log.d(TAG, "onFailure: " + errorResponse.toString());
                     throwable.printStackTrace();
                 }
 
                 @Override
                 public void onFailure(int statusCode, Header[] headers, Throwable throwable,
-                    JSONArray errorResponse) {
+                                      JSONArray errorResponse) {
                     Log.d(TAG, "onFailure: " + errorResponse.toString());
                     throwable.printStackTrace();
                 }
 
                 @Override
                 public void onFailure(int statusCode, Header[] headers, String responseString,
-                    Throwable throwable) {
+                                      Throwable throwable) {
                     Log.d(TAG, "onFailure: " + responseString.toString());
                     throwable.printStackTrace();
                 }
@@ -152,7 +153,7 @@ public class TimelineActivity extends AppCompatActivity {
 
 
     private void populateTimeLine(Long max_id, final boolean isRefresh) {
-        if(NetworkUtils.isOnline(this,mBinding.included.rvTweets, snackbar)) {
+        if (NetworkUtils.isOnline(this, mBinding.included.rvTweets, snackbar)) {
             client.getHomeTimeline(new JsonHttpResponseHandler() {
                 ArrayList<Tweet> newTweets;
 
@@ -183,8 +184,9 @@ public class TimelineActivity extends AppCompatActivity {
                         tweetAdapter.clear();
                         mBinding.included.swipeContainer.setRefreshing(false);
 
-                    }{
-                        tweetsLoaded=true;
+                    }
+                    {
+                        tweetsLoaded = true;
                         mDataLoadedListner.onDataLoaded();
                     }
 
@@ -196,35 +198,35 @@ public class TimelineActivity extends AppCompatActivity {
 
                 @Override
                 public void onFailure(int statusCode, Header[] headers, Throwable throwable,
-                    JSONObject errorResponse) {
+                                      JSONObject errorResponse) {
                     Log.d(TAG, "onFailure: " + errorResponse.toString());
                     throwable.printStackTrace();
                 }
 
                 @Override
                 public void onFailure(int statusCode, Header[] headers, Throwable throwable,
-                    JSONArray errorResponse) {
+                                      JSONArray errorResponse) {
                     Log.d(TAG, "onFailure: " + errorResponse.toString());
                     throwable.printStackTrace();
                 }
 
                 @Override
                 public void onFailure(int statusCode, Header[] headers, String responseString,
-                    Throwable throwable) {
+                                      Throwable throwable) {
                     Log.d(TAG, "onFailure: " + responseString.toString());
                     throwable.printStackTrace();
                 }
             }, max_id);
-        }else{
-            if(isRefresh){
+        } else {
+            if (isRefresh) {
                 mBinding.included.swipeContainer.setRefreshing(false);
                 return;
-            }else{
-                if(tweets.isEmpty()) {
+            } else {
+                if (tweets.isEmpty()) {
                     List<Tweet> newTweets = SQLite
-                        .select()
-                        .from(Tweet.class)
-                        .queryList();
+                            .select()
+                            .from(Tweet.class)
+                            .queryList();
                     tweets.addAll(newTweets);
                     tweetAdapter.notifyDataSetChanged();
                 }
@@ -234,15 +236,15 @@ public class TimelineActivity extends AppCompatActivity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if(resultCode!= Activity.RESULT_OK){
+        if (resultCode != Activity.RESULT_OK) {
             return;
         }
-        if(REQUEST_CODE_ADD_TWEET==requestCode){
-            if(data==null){
+        if (REQUEST_CODE_ADD_TWEET == requestCode) {
+            if (data == null) {
                 return;
             }
-            Tweet tweet=(Tweet)Parcels.unwrap(data.getParcelableExtra("tweet"));
-            tweets.add(0,tweet);
+            Tweet tweet = (Tweet) Parcels.unwrap(data.getParcelableExtra("tweet"));
+            tweets.add(0, tweet);
             tweetAdapter.notifyDataSetChanged();
         }
     }
@@ -254,42 +256,42 @@ public class TimelineActivity extends AppCompatActivity {
         finish();
     }
 
-    public void onNewTweetAdded(Tweet tweet){
-        tweets.add(0,tweet);
+    public void onNewTweetAdded(Tweet tweet) {
+        tweets.add(0, tweet);
         tweetAdapter.notifyDataSetChanged();
     }
 
-    public User getUser(){
+    public User getUser() {
         return mCurrentUser;
     }
 
-    private final TweetClickCallback mTweetClickCallback=new TweetClickCallback() {
+    private final TweetClickCallback mTweetClickCallback = new TweetClickCallback() {
         @Override
         public void onClick(Tweet tweet) {
-            Intent intent=new Intent(getApplication(), TweetActivity.class);
-                intent.putExtra(TWEET, Parcels.wrap(tweet));
-                startActivity(intent);
+            Intent intent = new Intent(getApplication(), TweetActivity.class);
+            intent.putExtra(TWEET, Parcels.wrap(tweet));
+            startActivity(intent);
         }
     };
 
-    private final DataLoadedListner mDataLoadedListner=new DataLoadedListner() {
+    private final DataLoadedListner mDataLoadedListner = new DataLoadedListner() {
         @Override
         public void onDataLoaded() {
-            if(userLoaded&&tweetsLoaded){
+            if (userLoaded && tweetsLoaded) {
                 setLoading(false);
-                userLoaded=false;
-                tweetsLoaded=false;
+                userLoaded = false;
+                tweetsLoaded = false;
             }
         }
     };
 
-    private void setLoading(boolean isLoading){
+    private void setLoading(boolean isLoading) {
         mBinding.setIsLoading(isLoading);
         mBinding.included.setIsLoading(isLoading);
         mBinding.includedToolbar.setIsLoading(isLoading);
     }
 
-    private interface DataLoadedListner{
+    private interface DataLoadedListner {
         void onDataLoaded();
     }
 

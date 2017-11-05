@@ -5,10 +5,10 @@
     android:id="@+id/toolbar"
     android:layout_width="match_parent"
     android:layout_height="?attr/actionBarSize"
-    android:background="?attr/colorPrimary"
-    app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
+    android:background="@android:color/background_light"
+    app:layout_collapseMode="pin"
     app:layout_scrollFlags="scroll|enterAlways"
-    app:layout_collapseMode="pin">
+    app:popupTheme="@style/ThemeOverlay.AppCompat.Light">
 
     <include layout="@layout/content_new_tweet_toolbar"/>
 
