@@ -7,7 +7,7 @@
     android:layout_height="match_parent"
 
     android:background="@android:color/background_light"
-    tools:context="com.codepath.apps.restclienttemplate.activities.AddNewTweetActivity">
+    tools:context=".ui.activities.AddNewTweetActivity">
 
     <include
         android:id="@+id/include"

@@ -1,4 +1,4 @@
-package com.codepath.apps.restclienttemplate.activities;
+package com.codepath.apps.restclienttemplate.ui.activities;
 
 import android.app.Activity;
 import android.content.Intent;

@@ -15,14 +15,14 @@ import java.io.IOException;
 
 public class NetworkUtils {
 
-  private static Boolean isNetworkAvailable(Activity activity) {
+  public static Boolean isNetworkAvailable(Activity activity) {
     ConnectivityManager connectivityManager
         = (ConnectivityManager) activity.getSystemService(Context.CONNECTIVITY_SERVICE);
     NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
     return activeNetworkInfo != null && activeNetworkInfo.isConnectedOrConnecting();
   }
 
-  private static boolean isInternetAvailable() {
+  public static boolean isInternetAvailable() {
     Runtime runtime = Runtime.getRuntime();
     try {
       Process ipProcess = runtime.exec("/system/bin/ping -c 1 8.8.8.8");

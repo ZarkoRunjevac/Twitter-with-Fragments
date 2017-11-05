@@ -1,30 +1,22 @@
-package com.codepath.apps.restclienttemplate.fragments;
+package com.codepath.apps.restclienttemplate.ui.activities;
 
-import android.app.DialogFragment;
 import android.content.Intent;
-import android.graphics.Point;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
+import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
-import android.view.Display;
-import android.view.Gravity;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
-import android.view.Window;
-import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
 import com.codepath.apps.restclienttemplate.R;
 import com.codepath.apps.restclienttemplate.TwitterApp;
-import com.codepath.apps.restclienttemplate.TwitterClient;
-import com.codepath.apps.restclienttemplate.activities.TimelineActivity;
+import com.codepath.apps.restclienttemplate.service.TwitterClient;
 import com.codepath.apps.restclienttemplate.models.Tweet;
 import com.codepath.apps.restclienttemplate.models.User;
 import com.loopj.android.http.JsonHttpResponseHandler;
@@ -36,17 +28,13 @@ import org.parceler.Parcels;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import butterknife.Unbinder;
 import cz.msebera.android.httpclient.Header;
 import cz.msebera.android.httpclient.util.TextUtils;
 
-import static android.content.ContentValues.TAG;
+public class AddNewTweetActivity extends AppCompatActivity {
 
-/**
- * Created by zarkorunjevac on 29/10/17.
- */
-
-public class NewTweetFragment extends DialogFragment{
+    private static final String TAG = AddNewTweetActivity.class.getCanonicalName();
+    private static final String TWEET_IS_ADDED="com.codepath.apps.restclienttemplate.ui.activities.tweet_added";
 
 
 
@@ -61,37 +49,19 @@ public class NewTweetFragment extends DialogFragment{
 
     private int mCharCount=140;
 
-    private Unbinder unbinder;
-
-    private  User mCurrentUser;
-
-
-
-    public static NewTweetFragment newInstance(){
-
-        return new NewTweetFragment();
-    }
-
     @Override
-    public void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        //setStyle(DialogFragment.STYLE_NORMAL, R.style.TweetDialog);
-    }
+        setContentView(R.layout.activity_add_new_tweet);
+        ButterKnife.bind(this);
 
+        final User currentUser=(User) Parcels.unwrap(getIntent().getParcelableExtra("user"));
 
-
-    @Nullable
-    @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
-        View view=inflater.inflate(R.layout.activity_add_new_tweet,container,false);
-        unbinder= ButterKnife.bind(this,view);
-        Bundle bundle=getActivity().getIntent().getExtras();
-
-        mCurrentUser=((TimelineActivity) getActivity()).getUser();
         client = TwitterApp.getRestClient();
 
         Glide.with(this)
-                .load(mCurrentUser.profileImageUrl)
+                .load(currentUser.profileImageUrl)
+                .apply(RequestOptions.circleCropTransform())
                 .into(ivProfilePicture);
 
         btTweet.setOnClickListener(new View.OnClickListener() {
@@ -107,33 +77,11 @@ public class NewTweetFragment extends DialogFragment{
         ivDiscard.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                dismiss();
+                finish();
             }
         });
 
         initTextWatcher();
-        return view;
-    }
-
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-        unbinder.unbind();
-    }
-
-    @Override
-    public void onResume() {
-        // Store access variables for window and blank point
-        Window window = getDialog().getWindow();
-        Point size = new Point();
-        // Store dimensions of the screen in `size`
-        Display display = window.getWindowManager().getDefaultDisplay();
-        display.getSize(size);
-        // Set the width of the dialog proportional to 75% of the screen width
-        window.setLayout(WindowManager.LayoutParams.MATCH_PARENT, WindowManager.LayoutParams.MATCH_PARENT);
-        window.setGravity(Gravity.CENTER);
-        // Call super onResume after sizing
-        super.onResume();
 
     }
 
@@ -146,10 +94,8 @@ public class NewTweetFragment extends DialogFragment{
                     Tweet tweet = Tweet.fromJson(response);
                     Intent intent=new Intent();
                     intent.putExtra("tweet", Parcels.wrap(tweet));
-                    //setResult(RESULT_OK,intent);
-                    TimelineActivity timelineActivity=(TimelineActivity)getActivity();
-                    timelineActivity.onNewTweetAdded(tweet);
-                    dismiss();
+                    setResult(RESULT_OK,intent);
+                    finish();
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
@@ -189,7 +135,7 @@ public class NewTweetFragment extends DialogFragment{
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
                 if(0==charSequence.length()) btTweet.setEnabled(false);
-                charCount=charSequence.length();
+                 charCount=charSequence.length();
 
             }
 

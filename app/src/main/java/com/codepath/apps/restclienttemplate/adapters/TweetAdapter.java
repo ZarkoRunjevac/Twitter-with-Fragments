@@ -1,8 +1,9 @@
-package com.codepath.apps.restclienttemplate;
+package com.codepath.apps.restclienttemplate.adapters;
 
-import android.content.Context;
+import android.app.Activity;
 import android.databinding.DataBindingUtil;
 import android.support.annotation.Nullable;
+import android.support.design.widget.Snackbar;
 import android.support.v7.util.DiffUtil;
 import android.support.v7.util.DiffUtil.Callback;
 import android.support.v7.widget.RecyclerView;
@@ -12,9 +13,11 @@ import android.view.ViewGroup;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
+import com.codepath.apps.restclienttemplate.R;
 import com.codepath.apps.restclienttemplate.callback.TweetClickCallback;
 import com.codepath.apps.restclienttemplate.databinding.ItemTweetBinding;
 import com.codepath.apps.restclienttemplate.models.Tweet;
+import com.codepath.apps.restclienttemplate.utils.NetworkUtils;
 
 import java.lang.ref.WeakReference;
 import java.util.List;
@@ -33,13 +36,15 @@ public class TweetAdapter extends RecyclerView.Adapter<TweetAdapter.ViewHolder> 
     private final TweetClickCallback mTweetClickCallback;
 
     private List<? extends Tweet> mTweets;
-    final WeakReference<Context> mContext;
+    final WeakReference<Activity> mContext;
+
+    private Snackbar snackbar;
 
 
 
-    public TweetAdapter(Context context,@Nullable TweetClickCallback tweetClickCallback) {
+    public TweetAdapter(Activity context, @Nullable TweetClickCallback tweetClickCallback) {
         mTweetClickCallback=tweetClickCallback;
-        mContext=new WeakReference<Context>(context);
+        mContext=new WeakReference<Activity>(context);
     }
 
     public void setTweetList(final List<? extends Tweet> tweetList){
@@ -78,7 +83,7 @@ public class TweetAdapter extends RecyclerView.Adapter<TweetAdapter.ViewHolder> 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
       ItemTweetBinding binding= DataBindingUtil
-          .inflate(LayoutInflater.from(parent.getContext()),R.layout.item_tweet,
+          .inflate(LayoutInflater.from(parent.getContext()), R.layout.item_tweet,
               parent,false);
         binding.setCallback(mTweetClickCallback);
 
@@ -103,9 +108,12 @@ public class TweetAdapter extends RecyclerView.Adapter<TweetAdapter.ViewHolder> 
 
 
             holder.binding.vvVideoPlayer.setVisibility(View.VISIBLE);
+            if(NetworkUtils.isInternetAvailable()&&NetworkUtils.isNetworkAvailable(mContext.get())){
             holder.binding.vvVideoPlayer.setVideoPath(tweet.embeddedVideo);
 
-            holder.binding.vvVideoPlayer.start();
+                holder.binding.vvVideoPlayer.start();
+            }
+
 
 
         }else {
@@ -120,12 +128,14 @@ public class TweetAdapter extends RecyclerView.Adapter<TweetAdapter.ViewHolder> 
 
     @Override
     public int getItemCount() {
-        return mTweets.size();
+       return mTweets==null ? 0 : mTweets.size();
     }
 
     public void clear(){
+        if(mTweets!=null){
         mTweets.clear();
         notifyDataSetChanged();
+        }
     }
 
 

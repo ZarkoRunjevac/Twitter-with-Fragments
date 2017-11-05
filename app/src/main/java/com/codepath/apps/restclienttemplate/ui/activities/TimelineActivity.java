@@ -1,4 +1,4 @@
-package com.codepath.apps.restclienttemplate.activities;
+package com.codepath.apps.restclienttemplate.ui.activities;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -11,16 +11,17 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.codepath.apps.restclienttemplate.R;
-import com.codepath.apps.restclienttemplate.TweetAdapter;
+import com.codepath.apps.restclienttemplate.adapters.TweetAdapter;
 import com.codepath.apps.restclienttemplate.TwitterApp;
-import com.codepath.apps.restclienttemplate.TwitterClient;
+import com.codepath.apps.restclienttemplate.service.TwitterClient;
 import com.codepath.apps.restclienttemplate.callback.TweetClickCallback;
 import com.codepath.apps.restclienttemplate.databinding.ActivityTimelineBinding;
-import com.codepath.apps.restclienttemplate.fragments.NewTweetFragment;
+import com.codepath.apps.restclienttemplate.ui.fragments.NewTweetFragment;
 import com.codepath.apps.restclienttemplate.models.Tweet;
 import com.codepath.apps.restclienttemplate.models.User;
 import com.codepath.apps.restclienttemplate.utils.EndlessRecyclerViewScrollListener;
@@ -42,7 +43,7 @@ public class TimelineActivity extends AppCompatActivity {
 
     private static final String TAG = TimelineActivity.class.getCanonicalName();
     private static final int REQUEST_CODE_ADD_TWEET = 0;
-    public static final String TWEET = "com.codepath.apps.restclienttemplate.TweetAdapter.TWEET";
+    public static final String TWEET = "com.codepath.apps.restclienttemplate.adapters.TweetAdapter.TWEET";
 
     private TwitterClient client;
     TweetAdapter tweetAdapter;
@@ -83,9 +84,14 @@ public class TimelineActivity extends AppCompatActivity {
         mBinding.fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                if (NetworkUtils.isOnline(TimelineActivity.this, mBinding.included.rvTweets, snackbar)) {
+                    NewTweetFragment newTweetFragment = NewTweetFragment.newInstance();
+                    newTweetFragment.show(getFragmentManager(), "newTweetTag");
+                }else {
+                    Toast.makeText(TimelineActivity.this,"No internet connection",Toast.LENGTH_LONG);
+                }
 
-                NewTweetFragment newTweetFragment = NewTweetFragment.newInstance();
-                newTweetFragment.show(getFragmentManager(), "newTweetTag");
+
             }
         });
 
@@ -148,6 +154,9 @@ public class TimelineActivity extends AppCompatActivity {
                     throwable.printStackTrace();
                 }
             });
+        } else {
+            userLoaded = true;
+            mDataLoadedListner.onDataLoaded();
         }
     }
 
@@ -228,7 +237,10 @@ public class TimelineActivity extends AppCompatActivity {
                             .from(Tweet.class)
                             .queryList();
                     tweets.addAll(newTweets);
+                    tweetAdapter.setTweetList(tweets);
                     tweetAdapter.notifyDataSetChanged();
+                    tweetsLoaded = true;
+                    mDataLoadedListner.onDataLoaded();
                 }
             }
         }

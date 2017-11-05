@@ -5,7 +5,7 @@
                                              android:layout_width="match_parent"
                                              android:layout_height="match_parent"
                                              android:background="@android:color/background_light"
-                                             tools:context="com.codepath.apps.restclienttemplate.activities.TweetActivity">
+                                             tools:context=".ui.activities.TweetActivity">
 
     <ImageView
         android:id="@+id/ivProfileImage"
