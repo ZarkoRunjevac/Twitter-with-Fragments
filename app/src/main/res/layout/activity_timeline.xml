@@ -54,13 +54,12 @@
           </android.support.v7.widget.Toolbar>
       </android.support.design.widget.AppBarLayout>
 
-    <include
-      layout="@layout/content_timeline"
-      android:id="@+id/included"
-
-      android:layout_width="match_parent"
-      android:layout_height="match_parent"
-      app:layout_behavior="@string/appbar_scrolling_view_behavior" />
+        <fragment
+            app:layout_behavior="@string/appbar_scrolling_view_behavior"
+            android:id="@+id/fragment_timeline"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            class="com.codepath.apps.restclienttemplate.ui.fragments.HomeTimelineFragment"/>
 
       <android.support.design.widget.FloatingActionButton
           android:id="@+id/fab"

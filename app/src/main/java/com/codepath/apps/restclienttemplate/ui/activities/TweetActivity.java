@@ -15,6 +15,7 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.codepath.apps.restclienttemplate.R;
 import com.codepath.apps.restclienttemplate.models.Tweet;
+import com.codepath.apps.restclienttemplate.ui.fragments.TweetsListFragment;
 import com.codepath.apps.restclienttemplate.utils.Utils;
 
 import org.parceler.Parcels;
@@ -54,7 +55,7 @@ public class TweetActivity extends AppCompatActivity {
         setContentView(R.layout.activity_tweet);
         ButterKnife.bind(this);
 
-        final Tweet tweet = (Tweet) Parcels.unwrap(getIntent().getParcelableExtra(TimelineActivity.TWEET));
+        final Tweet tweet = (Tweet) Parcels.unwrap(getIntent().getParcelableExtra(TweetsListFragment.TWEET));
 
         Glide.with(getApplicationContext())
                 .load(tweet.user.profileImageUrl)
