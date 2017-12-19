@@ -4,10 +4,14 @@ import android.app.Activity;
 import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
+import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
+import android.support.v4.app.Fragment;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
@@ -18,8 +22,9 @@ import com.codepath.apps.restclienttemplate.databinding.ActivityTimelineBinding;
 import com.codepath.apps.restclienttemplate.models.Tweet;
 import com.codepath.apps.restclienttemplate.models.User;
 import com.codepath.apps.restclienttemplate.service.TwitterClient;
+import com.codepath.apps.restclienttemplate.ui.fragments.HomeTimelineFragment;
 import com.codepath.apps.restclienttemplate.ui.fragments.NewTweetFragment;
-import com.codepath.apps.restclienttemplate.ui.fragments.TweetsListFragment;
+import com.codepath.apps.restclienttemplate.ui.fragments.TweetsPagerAdapter;
 import com.codepath.apps.restclienttemplate.utils.NetworkUtils;
 import com.loopj.android.http.JsonHttpResponseHandler;
 
@@ -42,8 +47,11 @@ public class TimelineActivity extends AppCompatActivity {
     private User mCurrentUser;
 
 
-    TweetsListFragment mFragmentTweetsList;
+
     ActivityTimelineBinding mBinding;
+
+
+    private TweetsPagerAdapter mTweetsPagerAdapter;
 
 
     private boolean userLoaded = false;
@@ -58,9 +66,11 @@ public class TimelineActivity extends AppCompatActivity {
 
         client = TwitterApp.getRestClient();
 
-        mFragmentTweetsList=(TweetsListFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_timeline);
+        mTweetsPagerAdapter=new TweetsPagerAdapter(getSupportFragmentManager(),this);
 
+        mBinding.viewpager.setAdapter(mTweetsPagerAdapter);
 
+        mBinding.slidingTabs.setupWithViewPager(mBinding.viewpager);
 
         getCurrentUser();
 
@@ -142,7 +152,8 @@ public class TimelineActivity extends AppCompatActivity {
                 return;
             }
             Tweet tweet = (Tweet) Parcels.unwrap(data.getParcelableExtra("tweet"));
-            mFragmentTweetsList.addNewTweet(tweet);
+            HomeTimelineFragment homeTimelineFragment=(HomeTimelineFragment)mTweetsPagerAdapter.getItem(0);
+            homeTimelineFragment.addNewTweet(tweet);
         }
     }
 
@@ -153,8 +164,21 @@ public class TimelineActivity extends AppCompatActivity {
         finish();
     }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_timeline,menu);
+        return true;
+    }
+
+    public void onProfileView(MenuItem item){
+        Intent i=new Intent(this,ProfileActivity.class);
+        i.putExtra("user", Parcels.wrap(mCurrentUser));
+        startActivity(i);
+    }
+
     public void onNewTweetAdded(Tweet tweet) {
-        mFragmentTweetsList.addNewTweet(tweet);
+        HomeTimelineFragment homeTimelineFragment=(HomeTimelineFragment)findFragmentByPosition(0);
+        homeTimelineFragment.addNewTweet(tweet);
     }
 
     public User getUser() {
@@ -180,5 +204,12 @@ public class TimelineActivity extends AppCompatActivity {
         mBinding.includedToolbar.setIsLoading(isLoading);
     }
 
+
+    public Fragment findFragmentByPosition(int position) {
+        FragmentPagerAdapter fragmentPagerAdapter = mTweetsPagerAdapter;
+        return getSupportFragmentManager().findFragmentByTag(
+                "android:switcher:" + mBinding.viewpager.getId() + ":"
+                        + fragmentPagerAdapter.getItemId(position));
+    }
 
 }

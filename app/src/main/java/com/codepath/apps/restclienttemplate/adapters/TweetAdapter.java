@@ -15,6 +15,7 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.codepath.apps.restclienttemplate.R;
 import com.codepath.apps.restclienttemplate.callback.TweetClickCallback;
+import com.codepath.apps.restclienttemplate.callback.UserClickCallback;
 import com.codepath.apps.restclienttemplate.databinding.ItemTweetBinding;
 import com.codepath.apps.restclienttemplate.models.Tweet;
 import com.codepath.apps.restclienttemplate.utils.NetworkUtils;
@@ -35,6 +36,9 @@ public class TweetAdapter extends RecyclerView.Adapter<TweetAdapter.ViewHolder> 
     @Nullable
     private final TweetClickCallback mTweetClickCallback;
 
+    @Nullable
+    private final UserClickCallback mUserClickCallback;
+
     private List<? extends Tweet> mTweets;
     final WeakReference<Activity> mContext;
 
@@ -42,8 +46,9 @@ public class TweetAdapter extends RecyclerView.Adapter<TweetAdapter.ViewHolder> 
 
 
 
-    public TweetAdapter(Activity context, @Nullable TweetClickCallback tweetClickCallback) {
+    public TweetAdapter(Activity context, @Nullable TweetClickCallback tweetClickCallback,@Nullable UserClickCallback userClickCallback) {
         mTweetClickCallback=tweetClickCallback;
+        mUserClickCallback=userClickCallback;
         mContext=new WeakReference<Activity>(context);
     }
 
@@ -86,6 +91,7 @@ public class TweetAdapter extends RecyclerView.Adapter<TweetAdapter.ViewHolder> 
           .inflate(LayoutInflater.from(parent.getContext()), R.layout.item_tweet,
               parent,false);
         binding.setCallback(mTweetClickCallback);
+        binding.setUserClickCallback(mUserClickCallback);
 
         return new ViewHolder(binding);
     }

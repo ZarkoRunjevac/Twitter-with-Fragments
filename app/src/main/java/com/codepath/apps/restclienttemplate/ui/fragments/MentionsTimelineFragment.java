@@ -16,25 +16,22 @@ import org.json.JSONObject;
 import cz.msebera.android.httpclient.Header;
 
 /**
- * Created by zarkorunjevac on 19/11/17.
+ * Created by zarkorunjevac on 02/12/17.
  */
 
-public class HomeTimelineFragment extends TweetsListFragment {
+public class MentionsTimelineFragment extends TweetsListFragment {
 
-    private static final String TAG = HomeTimelineFragment.class.getCanonicalName();
+    private static final String TAG = MentionsTimelineFragment.class.getCanonicalName();
 
     private TwitterClient client;
-
-
-
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         client = TwitterApp.getRestClient();
-
-
     }
+
+
 
     @Override
     public void onResume() {
@@ -44,7 +41,7 @@ public class HomeTimelineFragment extends TweetsListFragment {
 
     public void populateTimeLine(Long max_id, final boolean isRefresh) {
         if (NetworkUtils.isNetworkAvailable(getActivity())&&NetworkUtils.isInternetAvailable()) {
-            client.getHomeTimeline(new JsonHttpResponseHandler() {
+            client.getMentionsTimeline(new JsonHttpResponseHandler() {
 
 
                 @Override
@@ -56,7 +53,7 @@ public class HomeTimelineFragment extends TweetsListFragment {
                 public void onSuccess(int statusCode, Header[] headers, JSONArray response) {
                     Log.d(TAG, "onSuccess: " + response.toString());
 
-                    addItems(response,isRefresh, TimelineType.HOME);
+                    addItems(response,isRefresh, TimelineType.MENTIONS);
 
 
                 }
@@ -83,10 +80,7 @@ public class HomeTimelineFragment extends TweetsListFragment {
                 }
             }, max_id);
         } else {
-            addItems(null,isRefresh,TimelineType.HOME);
+            addItems(null,isRefresh,TimelineType.MENTIONS);
         }
     }
-
-
-
 }

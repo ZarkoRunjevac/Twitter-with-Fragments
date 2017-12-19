@@ -16,15 +16,14 @@ import org.json.JSONObject;
 import cz.msebera.android.httpclient.Header;
 
 /**
- * Created by zarkorunjevac on 19/11/17.
+ * Created by zarkorunjevac on 09/12/17.
  */
 
-public class HomeTimelineFragment extends TweetsListFragment {
+public class UserTimeLineFragment extends TweetsListFragment {
 
-    private static final String TAG = HomeTimelineFragment.class.getCanonicalName();
+    private static final String TAG = UserTimeLineFragment.class.getCanonicalName();
 
     private TwitterClient client;
-
 
 
 
@@ -43,8 +42,14 @@ public class HomeTimelineFragment extends TweetsListFragment {
     }
 
     public void populateTimeLine(Long max_id, final boolean isRefresh) {
+
         if (NetworkUtils.isNetworkAvailable(getActivity())&&NetworkUtils.isInternetAvailable()) {
-            client.getHomeTimeline(new JsonHttpResponseHandler() {
+            Bundle bundle=getArguments();
+            String screenName=null;
+            if(bundle!=null){
+                screenName=bundle.getString("screen_name");
+            }
+            client.getUserTimeline(new JsonHttpResponseHandler() {
 
 
                 @Override
@@ -81,12 +86,19 @@ public class HomeTimelineFragment extends TweetsListFragment {
                     Log.d(TAG, "onFailure: " + responseString.toString());
                     throwable.printStackTrace();
                 }
-            }, max_id);
+            }, max_id,screenName);
         } else {
             addItems(null,isRefresh,TimelineType.HOME);
         }
     }
 
+    public static UserTimeLineFragment newInstance(String screenName){
+        UserTimeLineFragment userTimeLineFragment=new UserTimeLineFragment();
 
+        Bundle args=new Bundle();
+        args.putString("screen_name",screenName);
+        userTimeLineFragment.setArguments(args);
 
+        return userTimeLineFragment;
+    }
 }

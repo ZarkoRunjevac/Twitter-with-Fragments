@@ -1,48 +1,54 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-  package="com.codepath.apps.restclienttemplate"
-  android:versionCode="1"
-  android:versionName="1.0">
+          package="com.codepath.apps.restclienttemplate"
+          android:versionCode="1"
+          android:versionName="1.0">
 
-    <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
 
     <application
-      android:allowBackup="true"
-      android:icon="@drawable/twitterlogo"
-      android:label="@string/app_name"
-      android:name=".TwitterApp"
-      android:theme="@style/AppTheme">
+        android:name=".TwitterApp"
+        android:allowBackup="true"
+        android:icon="@drawable/twitterlogo"
+        android:label="@string/app_name"
+        android:theme="@style/AppTheme">
         <activity
-          android:label="@string/app_name"
-          android:name=".ui.activities.LoginActivity"
-          android:theme="@style/AppTheme">
+            android:name=".ui.activities.LoginActivity"
+            android:label="@string/app_name"
+            android:theme="@style/AppTheme">
             <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
+                <action android:name="android.intent.action.MAIN"/>
 
-                <category android:name="android.intent.category.LAUNCHER" />
+                <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
             <intent-filter>
-                <action android:name="android.intent.action.VIEW" />
+                <action android:name="android.intent.action.VIEW"/>
 
-                <category android:name="android.intent.category.DEFAULT" />
-                <category android:name="android.intent.category.BROWSABLE" />
+                <category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="android.intent.category.BROWSABLE"/>
 
                 <data
-                  android:host="@string/intent_host"
-                  android:scheme="@string/intent_scheme" />
+                    android:host="@string/intent_host"
+                    android:scheme="@string/intent_scheme"/>
             </intent-filter>
         </activity>
-        <activity android:name=".ui.activities.TimelineActivity" />
+        <activity android:name=".ui.activities.TimelineActivity"/>
         <activity
-          android:name=".ui.activities.AddNewTweetActivity"
-          android:windowSoftInputMode="adjustResize" />
+            android:name=".ui.activities.AddNewTweetActivity"
+            android:windowSoftInputMode="adjustResize"/>
         <activity
-          android:name=".ui.activities.TweetActivity"
-          android:label="@string/tweet"
-          android:theme="@style/AppTheme.Default" />
-        <activity android:name=".ui.activities.ReplyToTweetActivity" android:windowSoftInputMode="adjustResize"></activity>
+            android:name=".ui.activities.TweetActivity"
+            android:label="@string/tweet"
+            android:theme="@style/AppTheme.Default"/>
+        <activity
+            android:name=".ui.activities.ReplyToTweetActivity"
+            android:windowSoftInputMode="adjustResize"/>
+        <activity
+            android:name=".ui.activities.ProfileActivity"
+            android:theme="@style/AppTheme.Default">
+        </activity>
     </application>
 
 </manifest>

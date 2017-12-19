@@ -9,6 +9,9 @@
     <variable
       name="callback"
       type="com.codepath.apps.restclienttemplate.callback.TweetClickCallback"/>
+      <variable
+          name="userClickCallback"
+          type="com.codepath.apps.restclienttemplate.callback.UserClickCallback"/>
     <import type="com.codepath.apps.restclienttemplate.utils.Utils"/>
   </data>
 
@@ -30,7 +33,8 @@
             android:layout_marginTop="8dp"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:srcCompat="@android:color/black"/>
+            app:srcCompat="@android:color/black"
+            android:onClick="@{() ->  userClickCallback.onClick(tweet)}"/>
 
         <TextView
             android:id="@+id/tvUserName"
