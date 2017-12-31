@@ -47,10 +47,6 @@ public class HomeTimelineFragment extends TweetsListFragment {
             client.getHomeTimeline(new JsonHttpResponseHandler() {
 
 
-                @Override
-                public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
-                    Log.d(TAG, "onSuccess: " + response.toString());
-                }
 
                 @Override
                 public void onSuccess(int statusCode, Header[] headers, JSONArray response) {

@@ -154,6 +154,7 @@ public  abstract class TweetsListFragment extends Fragment {
             }
             if(newTweets.size()<24){//if it has no more new tweets (page size is 25) Scroll listner is not needed
                 removeScrollListener();
+                removeFooter();
             }
             tweets.addAll(newTweets);
             tweetAdapter.setTweetList(tweets);
@@ -205,7 +206,13 @@ public  abstract class TweetsListFragment extends Fragment {
     }
 
     public void removeScrollListener(){
+        Log.d(TAG, "removeScrollListener: ");
         mBinding.included.rvTweets.removeOnScrollListener(scrollListener);
+    }
+
+    public void removeFooter(){
+        Log.d(TAG, "removeFooter: ");
+        tweetAdapter.hideFooter(false);
     }
 
 

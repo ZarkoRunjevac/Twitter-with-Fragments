@@ -16,6 +16,7 @@ import com.bumptech.glide.request.RequestOptions;
 import com.codepath.apps.restclienttemplate.R;
 import com.codepath.apps.restclienttemplate.callback.TweetClickCallback;
 import com.codepath.apps.restclienttemplate.callback.UserClickCallback;
+import com.codepath.apps.restclienttemplate.databinding.FooterItemBinding;
 import com.codepath.apps.restclienttemplate.databinding.ItemTweetBinding;
 import com.codepath.apps.restclienttemplate.models.Tweet;
 import com.codepath.apps.restclienttemplate.utils.NetworkUtils;
@@ -29,8 +30,7 @@ import cz.msebera.android.httpclient.util.TextUtils;
  * Created by zarko.runjevac on 10/10/2017.
  */
 
-public class TweetAdapter extends RecyclerView.Adapter<TweetAdapter.ViewHolder> {
-
+public class TweetAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
 
     @Nullable
@@ -44,20 +44,27 @@ public class TweetAdapter extends RecyclerView.Adapter<TweetAdapter.ViewHolder> 
 
     private Snackbar snackbar;
 
+    private FooterViewHolder mFooterViewHolder;
 
 
-    public TweetAdapter(Activity context, @Nullable TweetClickCallback tweetClickCallback,@Nullable UserClickCallback userClickCallback) {
-        mTweetClickCallback=tweetClickCallback;
-        mUserClickCallback=userClickCallback;
-        mContext=new WeakReference<Activity>(context);
+    private static final int TYPE_ITEM = 0;
+    private static final int TYPE_FOOTER = 1;
+
+    private boolean showFooter=true;
+
+
+    public TweetAdapter(Activity context, @Nullable TweetClickCallback tweetClickCallback, @Nullable UserClickCallback userClickCallback) {
+        mTweetClickCallback = tweetClickCallback;
+        mUserClickCallback = userClickCallback;
+        mContext = new WeakReference<Activity>(context);
     }
 
-    public void setTweetList(final List<? extends Tweet> tweetList){
-        if(mTweets==null){
-            mTweets=tweetList;
-            notifyItemRangeChanged(0,tweetList.size());
-        }else{
-            DiffUtil.DiffResult result=DiffUtil.calculateDiff(new Callback() {
+    public void setTweetList(final List<? extends Tweet> tweetList) {
+        if (mTweets == null) {
+            mTweets = tweetList;
+            notifyItemRangeChanged(0, tweetList.size());
+        } else {
+            DiffUtil.DiffResult result = DiffUtil.calculateDiff(new Callback() {
                 @Override
                 public int getOldListSize() {
                     return mTweets.size();
@@ -70,96 +77,140 @@ public class TweetAdapter extends RecyclerView.Adapter<TweetAdapter.ViewHolder> 
 
                 @Override
                 public boolean areItemsTheSame(int oldItemPosition, int newItemPosition) {
-                    return mTweets.get(oldItemPosition).uid==tweetList.get(newItemPosition).uid;
+                    return mTweets.get(oldItemPosition).uid == tweetList.get(newItemPosition).uid;
                 }
 
                 @Override
                 public boolean areContentsTheSame(int oldItemPosition, int newItemPosition) {
-                    Tweet tweet=tweetList.get(newItemPosition);
-                    Tweet old=mTweets.get(oldItemPosition);
-                    return tweet.uid==old.uid;
+                    Tweet tweet = tweetList.get(newItemPosition);
+                    Tweet old = mTweets.get(oldItemPosition);
+                    return tweet.uid == old.uid;
                 }
             });
-            mTweets=tweetList;
+            mTweets = tweetList;
             result.dispatchUpdatesTo(this);
         }
     }
 
     @Override
-    public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-      ItemTweetBinding binding= DataBindingUtil
-          .inflate(LayoutInflater.from(parent.getContext()), R.layout.item_tweet,
-              parent,false);
-        binding.setCallback(mTweetClickCallback);
-        binding.setUserClickCallback(mUserClickCallback);
+    public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        if (viewType == TYPE_ITEM) {
+            ItemTweetBinding binding = DataBindingUtil
+                    .inflate(LayoutInflater.from(parent.getContext()), R.layout.item_tweet,
+                            parent, false);
+            binding.setCallback(mTweetClickCallback);
+            binding.setUserClickCallback(mUserClickCallback);
 
-        return new ViewHolder(binding);
+            return new ViewHolder(binding);
+        }else {
+
+            FooterItemBinding binding=DataBindingUtil
+                    .inflate(LayoutInflater.from(parent.getContext()), R.layout.footer_item,
+                            parent, false);
+            return new FooterViewHolder(binding);
+        }
     }
 
     @Override
-    public void onBindViewHolder(ViewHolder holder, int position) {
-        Tweet tweet = mTweets.get(position);
-        holder.binding.setTweet(tweet);
+    public void onBindViewHolder(RecyclerView.ViewHolder h, int position) {
+        if(h.getItemViewType() ==TYPE_ITEM){
+            ViewHolder holder=(ViewHolder) h;
+            Tweet tweet = mTweets.get(position);
+            holder.binding.setTweet(tweet);
 
-        holder.binding.vvVideoPlayer.setVisibility(View.GONE);
-        holder.binding.ivEmbeddedImage.setVisibility(View.GONE);
+            holder.binding.vvVideoPlayer.setVisibility(View.GONE);
+            holder.binding.ivEmbeddedImage.setVisibility(View.GONE);
 
-        Glide.with(mContext.get())
-                .load(tweet.user.profileImageUrl)
-                .apply(RequestOptions.circleCropTransform())
-                .into(holder.binding.ivProfileImage);
-        holder.binding.ivEmbeddedImage.setImageResource(0);
+            Glide.with(mContext.get())
+                    .load(tweet.user.profileImageUrl)
+                    .apply(RequestOptions.circleCropTransform())
+                    .into(holder.binding.ivProfileImage);
+            holder.binding.ivEmbeddedImage.setImageResource(0);
 
-        if (!TextUtils.isEmpty(tweet.embeddedVideo)){
+            if (!TextUtils.isEmpty(tweet.embeddedVideo)) {
 
 
-            holder.binding.vvVideoPlayer.setVisibility(View.VISIBLE);
-            if(NetworkUtils.isInternetAvailable()&&NetworkUtils.isNetworkAvailable(mContext.get())){
-            holder.binding.vvVideoPlayer.setVideoPath(tweet.embeddedVideo);
+                holder.binding.vvVideoPlayer.setVisibility(View.VISIBLE);
+                if (NetworkUtils.isInternetAvailable() && NetworkUtils.isNetworkAvailable(mContext.get())) {
+                    holder.binding.vvVideoPlayer.setVideoPath(tweet.embeddedVideo);
 
-                holder.binding.vvVideoPlayer.start();
+                    holder.binding.vvVideoPlayer.start();
+                }
+
+
+            } else {
+                if (!TextUtils.isEmpty(tweet.embeddedImage)) {
+                    holder.binding.ivEmbeddedImage.setVisibility(View.VISIBLE);
+                    Glide.with(mContext.get())
+                            .load(tweet.embeddedImage)
+                            .into(holder.binding.ivEmbeddedImage);
+                }
             }
 
-
-
+            holder.binding.executePendingBindings();
         }else {
-            if (!TextUtils.isEmpty(tweet.embeddedImage)) {
-                holder.binding.ivEmbeddedImage.setVisibility(View.VISIBLE);
-                Glide.with(mContext.get())
-                        .load(tweet.embeddedImage)
-                        .into(holder.binding.ivEmbeddedImage);
+            mFooterViewHolder=(FooterViewHolder)h;
+            if(showFooter){
+                mFooterViewHolder.binding.pbFooterLoading.setVisibility(View.VISIBLE);
+            }else {
+                mFooterViewHolder.binding.pbFooterLoading.setVisibility(View.GONE);
             }
+
+            mFooterViewHolder.binding.executePendingBindings();
         }
+
+    }
+
+
+    @Override
+    public int getItemViewType(int position) {
+        if(isPositionFooter(position)){
+            return TYPE_FOOTER;
+        }else{
+            return TYPE_ITEM;
+        }
+    }
+
+    private boolean isPositionFooter(int position){
+        return position==mTweets.size();
+    }
+
+    public void hideFooter(boolean showFooter){
+        //if(null!=mFooterViewHolder) mFooterViewHolder.binding.pbFooterLoading.setVisibility(View.GONE);
+        this.showFooter=showFooter;
     }
 
     @Override
     public int getItemCount() {
-       return mTweets==null ? 0 : mTweets.size();
+        return mTweets == null ? 0 : mTweets.size()+1;
     }
 
-    public void clear(){
-        if(mTweets!=null){
-        mTweets.clear();
-        notifyDataSetChanged();
+    public void clear() {
+        if (mTweets != null) {
+            mTweets.clear();
+            notifyDataSetChanged();
         }
     }
 
 
-
-    public  class ViewHolder extends RecyclerView.ViewHolder /*implements View.OnClickListener*/ {
+    public class ViewHolder extends RecyclerView.ViewHolder {
 
         public final ItemTweetBinding binding;
 
-
-
-        public ViewHolder( ItemTweetBinding binding) {
+        public ViewHolder(ItemTweetBinding binding) {
             super(binding.getRoot());
-            this.binding=binding;
-
-
+            this.binding = binding;
         }
 
+    }
 
+    public class FooterViewHolder extends RecyclerView.ViewHolder{
+        public final FooterItemBinding binding;
+
+        public FooterViewHolder(FooterItemBinding binding){
+            super(binding.getRoot());
+            this.binding=binding;
+        }
     }
 
 }
