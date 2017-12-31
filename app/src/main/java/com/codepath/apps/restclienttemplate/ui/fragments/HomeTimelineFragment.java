@@ -3,7 +3,9 @@ package com.codepath.apps.restclienttemplate.ui.fragments;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.util.Log;
+import android.widget.Toast;
 
+import com.codepath.apps.restclienttemplate.R;
 import com.codepath.apps.restclienttemplate.TwitterApp;
 import com.codepath.apps.restclienttemplate.service.TwitterClient;
 import com.codepath.apps.restclienttemplate.utils.NetworkUtils;
@@ -61,6 +63,12 @@ public class HomeTimelineFragment extends TweetsListFragment {
                 public void onFailure(int statusCode, Header[] headers, Throwable throwable,
                                       JSONObject errorResponse) {
                     Log.d(TAG, "onFailure: " + errorResponse.toString());
+                    //here
+                    setLoading(false);
+                    if(isRefresh){
+                        removeRefresh();
+                    }
+                    Toast.makeText(getContext(),getResources().getString(R.string.remove_refresh),Toast.LENGTH_LONG).show();
                     throwable.printStackTrace();
                 }
 

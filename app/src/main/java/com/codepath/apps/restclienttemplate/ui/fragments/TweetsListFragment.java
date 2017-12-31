@@ -152,6 +152,7 @@ public  abstract class TweetsListFragment extends Fragment {
                 tweetsLoaded = true;
                 mDataLoadedListner.onDataLoaded();
             }
+            Log.d(TAG, "addItems: newTweets.size()="+newTweets.size());
             if(newTweets.size()<24){//if it has no more new tweets (page size is 25) Scroll listner is not needed
                 removeScrollListener();
                 removeFooter();
@@ -194,10 +195,14 @@ public  abstract class TweetsListFragment extends Fragment {
         }
     };
 
-    private void setLoading(boolean isLoading) {
+    public void setLoading(boolean isLoading) {
 
 
         mBinding.included.setIsLoading(isLoading);
+    }
+
+    public void removeRefresh(){
+        mBinding.included.swipeContainer.setRefreshing(false);
     }
 
     public void addNewTweet(Tweet tweet){
