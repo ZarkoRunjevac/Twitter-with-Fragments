@@ -28,14 +28,10 @@ public class HomeTimelineFragment extends TweetsListFragment {
     private TwitterClient client;
 
 
-
-
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         client = TwitterApp.getRestClient();
-
-
     }
 
     @Override
@@ -48,15 +44,11 @@ public class HomeTimelineFragment extends TweetsListFragment {
         if (NetworkUtils.isNetworkAvailable(getActivity())&&NetworkUtils.isInternetAvailable()) {
             client.getHomeTimeline(new JsonHttpResponseHandler() {
 
-
-
                 @Override
                 public void onSuccess(int statusCode, Header[] headers, JSONArray response) {
                     Log.d(TAG, "onSuccess: " + response.toString());
 
                     addItems(response,isRefresh, TimelineType.HOME);
-
-
                 }
 
                 @Override
@@ -65,6 +57,7 @@ public class HomeTimelineFragment extends TweetsListFragment {
                     Log.d(TAG, "onFailure: " + errorResponse.toString());
                     //here
                     setLoading(false);
+                    removeFooter();
                     if(isRefresh){
                         removeRefresh();
                     }
@@ -87,7 +80,9 @@ public class HomeTimelineFragment extends TweetsListFragment {
                 }
             }, max_id);
         } else {
+
             addItems(null,isRefresh,TimelineType.HOME);
+
         }
     }
 

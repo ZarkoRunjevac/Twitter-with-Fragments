@@ -78,13 +78,13 @@ public  abstract class TweetsListFragment extends Fragment {
                 //remove last item because twitter api sends double
                 Log.d(TAG, "onLoadMore: ");
                 long max_id=tweets.get(tweets.size() - 1).uid;
-                tweets.remove(tweets.size() - 1);
-                mBinding.included.rvTweets.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        tweetAdapter.notifyDataSetChanged();
-                    }
-                });
+//                tweets.remove(tweets.size() - 1);
+//                mBinding.included.rvTweets.post(new Runnable() {
+//                    @Override
+//                    public void run() {
+//                        tweetAdapter.notifyDataSetChanged();
+//                    }
+//                });
 
                 populateTimeLine(max_id, false);
             }
@@ -153,13 +153,21 @@ public  abstract class TweetsListFragment extends Fragment {
                 mDataLoadedListner.onDataLoaded();
             }
             Log.d(TAG, "addItems: newTweets.size()="+newTweets.size());
-            if(newTweets.size()<24){//if it has no more new tweets (page size is 25) Scroll listner is not needed
+            if(newTweets.size()==1){//if it has no more new tweets (page size is 25) Scroll listner is not needed
                 removeScrollListener();
                 removeFooter();
             }
-            tweets.addAll(newTweets);
-            tweetAdapter.setTweetList(tweets);
-            tweetAdapter.notifyDataSetChanged();
+            if(tweets.size()>0){
+                if(newTweets.size()>0){
+                    newTweets.remove(0);
+                }
+            }
+
+            if (newTweets.size()>0) {
+                tweets.addAll(newTweets);
+                tweetAdapter.setTweetList(tweets);
+                tweetAdapter.notifyDataSetChanged();
+            }
         } else {
             if(timelineType==TimelineType.HOME){
                 if (isRefresh) {
