@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.ImageButton;
@@ -56,6 +57,8 @@ public class TweetActivity extends AppCompatActivity {
         ButterKnife.bind(this);
 
         final Tweet tweet = (Tweet) Parcels.unwrap(getIntent().getParcelableExtra(TweetsListFragment.TWEET));
+
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         Glide.with(getApplicationContext())
                 .load(tweet.user.profileImageUrl)
@@ -110,6 +113,19 @@ public class TweetActivity extends AppCompatActivity {
             Tweet tweet = (Tweet) Parcels.unwrap(data.getParcelableExtra("replyTweet"));
 //      tweets.add(0,tweet);
 //      tweetAdapter.notifyDataSetChanged();
+        }
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            // This is the up button
+            case android.R.id.home:
+                onBackPressed();
+
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
         }
     }
 }

@@ -41,14 +41,24 @@
         <activity
             android:name=".ui.activities.TweetActivity"
             android:label="@string/tweet"
-            android:theme="@style/AppTheme.Default"/>
+            android:parentActivityName=".ui.activities.TimelineActivity"
+            android:theme="@style/AppTheme.Default">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".ui.activities.TimelineActivity"/>
+        </activity>
         <activity
             android:name=".ui.activities.ReplyToTweetActivity"
             android:windowSoftInputMode="adjustResize"/>
         <activity
             android:name=".ui.activities.ProfileActivity"
+            android:parentActivityName=".ui.activities.TimelineActivity"
             android:theme="@style/AppTheme.Default">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".ui.activities.TimelineActivity"/>
         </activity>
+
     </application>
 
 </manifest>

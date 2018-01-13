@@ -4,6 +4,7 @@ import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.MenuItem;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
@@ -42,7 +43,7 @@ public class ProfileActivity extends AppCompatActivity {
 
         client = TwitterApp.getRestClient();
 
-        //String screenName=getIntent().getStringExtra("screen_name");
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         mCurrentUser = (User) Parcels.unwrap(getIntent().getParcelableExtra("user"));
 
@@ -55,6 +56,19 @@ public class ProfileActivity extends AppCompatActivity {
         }
 
 
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            // This is the up button
+            case android.R.id.home:
+                onBackPressed();
+
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
 
     private void getUser(Tweet tweet){
@@ -100,7 +114,7 @@ public class ProfileActivity extends AppCompatActivity {
         }
 
         private void setUpActivity(){
-            getSupportActionBar().setTitle(mCurrentUser.screenName);
+            getSupportActionBar().setTitle(mCurrentUser.name);
 
             UserTimeLineFragment userTimeLineFragment=UserTimeLineFragment.newInstance(mCurrentUser.screenName);
 
