@@ -168,6 +168,10 @@ public  abstract class TweetsListFragment extends Fragment {
                 tweetAdapter.setTweetList(tweets);
                 tweetAdapter.notifyDataSetChanged();
             }
+            if(tweets.size()<95){
+                removeScrollListener();
+                removeFooter();
+            }
         } else {
             if(timelineType==TimelineType.HOME){
                 if (isRefresh) {
